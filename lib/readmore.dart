@@ -55,6 +55,7 @@ class ReadMoreText extends StatefulWidget {
     this.textWidthBasis,
     this.textHeightBehavior,
     this.selectionColor,
+    this.onPressed,
   })  : richData = null,
         richPreData = null,
         richPostData = null;
@@ -88,6 +89,7 @@ class ReadMoreText extends StatefulWidget {
     this.textWidthBasis,
     this.textHeightBehavior,
     this.selectionColor,
+    this.onPressed,
   })  : data = null,
         annotations = null,
         preDataText = null,
@@ -99,6 +101,8 @@ class ReadMoreText extends StatefulWidget {
 
   /// Used on TrimMode.Length
   final int trimLength;
+
+  final GestureRecognizer? onPressed;
 
   /// Used on TrimMode.Lines
   final int trimLines;
@@ -180,9 +184,10 @@ class ReadMoreTextState extends State<ReadMoreText> {
       widget.isCollapsed ?? (_isCollapsed ??= ValueNotifier(true));
 
   void _onTap() {
-    if (widget.isExpandable) {
-      _effectiveIsCollapsed.value = !_effectiveIsCollapsed.value;
-    }
+    // if (widget.isExpandable) {
+    //   _effectiveIsCollapsed.value = !_effectiveIsCollapsed.value;
+    // }
+    widget.onPressed;
   }
 
   RegExp? _mergeRegexPatterns(List<Annotation>? annotations) {
@@ -277,7 +282,7 @@ class ReadMoreTextState extends State<ReadMoreText> {
     final link = TextSpan(
       text: isCollapsed ? widget.trimCollapsedText : widget.trimExpandedText,
       style: isCollapsed ? defaultMoreStyle : defaultLessStyle,
-      recognizer: _recognizer,
+      recognizer: widget.onPressed,
     );
 
     final delimiter = TextSpan(
@@ -287,7 +292,7 @@ class ReadMoreTextState extends State<ReadMoreText> {
               : ''
           : '',
       style: defaultDelimiterStyle,
-      recognizer: _recognizer,
+      recognizer: widget.onPressed,
     );
 
     Widget result = LayoutBuilder(
@@ -354,7 +359,7 @@ class ReadMoreTextState extends State<ReadMoreText> {
           strutStyle: widget.strutStyle,
           textWidthBasis: textWidthBasis,
           textHeightBehavior: textHeightBehavior,
-          ellipsis: overflow == TextOverflow.ellipsis ? widget.delimiter : null,
+          ellipsis: overflow == TextOverflow.clip ? widget.delimiter : null,
         );
         textPainter.layout(maxWidth: maxWidth);
         final linkSize = textPainter.size;
